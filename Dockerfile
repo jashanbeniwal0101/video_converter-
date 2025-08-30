@@ -1,8 +1,11 @@
 FROM python:3.11-slim
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# System deps: ffmpeg, unzip, zip, p7zip for 7z
+# Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg unzip zip p7zip-full libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
@@ -12,4 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python3", "bot.py"]
+# Run bot (main.py is your entry file)
+CMD ["python3", "main.py"]
