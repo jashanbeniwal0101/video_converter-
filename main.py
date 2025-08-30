@@ -1,7 +1,10 @@
 import asyncio
+import logging
 from pyrogram import Client
 from config import API_ID, API_HASH, BOT_TOKEN
 from handlers import media_menu, video_tools, audio_tools, archive_tools, ui_helpers, bulk_mode
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 app = Client(
     "media-bot",
@@ -18,6 +21,11 @@ archive_tools.init(app)
 ui_helpers.init(app)
 bulk_mode.init(app)
 
+async def main():
+    async with app:
+        logging.info("✅ Bot is online and running...")
+        await asyncio.Future()  # keep running
+
 if __name__ == "__main__":
-    print("🚀 Bot starting...")
-    app.run()
+    logging.info("🚀 Starting Media Bot...")
+    asyncio.run(main())
