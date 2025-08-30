@@ -1,48 +1,24 @@
-# main.py
 import os
-from pyrogram import Client, filters
-from config import API_ID, API_HASH, BOT_TOKEN
+from pathlib import Path
+from dotenv import load_dotenv
 
-# Initialize Pyrogram client
-app = Client(
-    "my_bot",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-    workers=50,  # allow multiple tasks
-    in_memory=True
-)
+# Load .env file
+load_dotenv()
 
-# /start command
-@app.on_message(filters.command("start"))
-async def start_cmd(client, message):
-    await message.reply_text(
-        "👋 Hello! Bot is running fine.\n\n"
-        "📥 Send me any video, audio, document, or zip file and I’ll handle it."
-    )
+API_ID = int(os.getenv("API_ID", "25331263"))
+API_HASH = os.getenv("API_HASH", "cab85305bf85125a2ac053210bcd1030")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "7368321164:AAFNU9jp-x1qsb_s6VviTpiMRxkVHKwDHB4")
 
-# Echo for text (optional)
-@app.on_message(filters.text & ~filters.command("start"))
-async def echo(client, message):
-    await message.reply_text(f"📝 You said: {message.text}")
+OWNER_ID = int(os.getenv("OWNER_ID", "1955406483"))
 
-# Handle media uploads
-@app.on_message(filters.video | filters.audio | filters.document)
-async def handle_media(client, message):
-    file = message.document or message.video or message.audio
-    if not file:
-        return await message.reply_text("❌ Unsupported file.")
-    
-    file_name = file.file_name if hasattr(file, "file_name") else "unknown"
-    file_size = round(file.file_size / (1024 * 1024), 2)
+# Working directory
+WORKDIR = Path(os.getenv("WORKDIR", "./runtime")).resolve()
+WORKDIR.mkdir(parents=True, exist_ok=True)
 
-    await message.reply_text(
-        f"✅ File received!\n\n"
-        f"📂 **Name:** {file_name}\n"
-        f"📦 **Size:** {file_size} MB\n"
-        f"⚙️ Stored successfully."
-    )
+# Limits
+MAX_JOBS_PER_USER = int(os.getenv("MAX_JOBS_PER_USER", "1"))
+MAX_INPUT_SIZE_MB = int(os.getenv("MAX_INPUT_SIZE_MB", "4096"))
 
-if __name__ == "__main__":
-    print("🚀 Bot starting...")
-    app.run()
+# FFmpeg defaults
+DEFAULT_CRF = int(os.getenv("DEFAULT_CRF", "23"))
+DEFAULT_PRESET = os.getenv("DEFAULT_PRESET", "medium")
